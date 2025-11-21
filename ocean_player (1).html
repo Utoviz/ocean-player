@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ocean Lyric Finder - Download</title>
+<style>
+  :root{
+    --sea-1:#dff8ff;
+    --sea-2:#b9f1ff;
+    --accent:#5ec7e8;
+    --deep:#0b6b83;
+    --shell:#fff1f0;
+  }
+  body{
+    margin:0;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background: linear-gradient(180deg,var(--sea-1),var(--sea-2));
+    color: var(--deep);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .card{
+    width:920px;
+    max-width:95%;
+    background: rgba(255,255,255,0.85);
+    border-radius:18px;
+    padding:22px;
+    box-shadow: 0 10px 30px rgba(2,50,70,0.12);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(94,199,232,0.15);
+  }
+  header{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .logo{
+    width:72px;
+    height:72px;
+    border-radius:50%;
+    background: radial-gradient(circle at 30% 30%, #fff, #c8f2ff 40%, #8ee0ff 100%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:32px;
+    box-shadow: inset 0 -6px 12px rgba(0,0,0,0.06);
+  }
+  h1{ margin:0; font-size:20px; }
+  p.lead{ margin:4px 0 0 0; font-size:13px; color: #046077; opacity:0.9;}
+
+  .controls{
+    display:flex;
+    gap:12px;
+    margin-top:16px;
+    align-items:center;
+  }
+
+  input[type="text"]{
+    flex:1;
+    padding:12px 14px;
+    border-radius:12px;
+    border:2px solid rgba(11,107,131,0.08);
+    font-size:14px;
+    outline:none;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+  }
+
+  .btn{
+    padding:10px 14px;
+    border-radius:12px;
+    border:none;
+    background:var(--accent);
+    color:white;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .btn.secondary{
+    background:#1f9fcf;
+  }
+  .btn.ghost{
+    background: transparent;
+    color:var(--deep);
+    border: 1px dashed rgba(11,107,131,0.12);
+  }
+
+  .row{
+    display:flex;
+    gap:16px;
+    margin-top:18px;
+  }
+  .col{
+    flex:1;
+  }
+
+  #lyricsBox{
+    background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.9));
+    border-radius:12px;
+    padding:14px;
+    min-height:260px;
+    max-height:420px;
+    overflow:auto;
+    white-space:pre-wrap;
+    border:1px solid rgba(11,107,131,0.06);
+    font-size:14px;
+    color: #033a48;
+  }
+
+  .small{
+    font-size:12px;
+    color:#035268;
+    opacity:0.9;
+  }
+
+  .footer{
+    margin-top:12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+  }
+
+  /* cute bubbles decoration */
+  .bubble{
+    position:absolute;
+    border-radius:50%;
+    opacity:0.25;
+    pointer-events:none;
+  }
+  .bubble.b1{ width:120px; height:120px; background:#aeefff; right:30px; top:-30px; }
+  .bubble.b2{ width:60px; height:60px; background:#c8f6ff; left:20px; bottom:-20px; }
+  .bubble.b3{ width:40px; height:40px; background:#dffbff; right:140px; bottom:20px; }
+
+  @media (max-width:720px){
+    .controls{ flex-direction:column; align-items:stretch; }
+    .row{ flex-direction:column; }
+  }
+</style>
+</head>
+<body>
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
+
+<div class="card" role="main" aria-label="Ocean Lyric Finder">
+  <header>
+    <div class="logo">🌊</div>
+    <div>
+      <h1>Ocean Lyric Finder</h1>
+      <p class="lead">Cute tropical ocean theme — search lyrics or pick a random song. Works offline with built‑in songs, or use the Lyrics.ovh API.</p>
+    </div>
+  </header>
+
+  <div class="controls" style="margin-top:18px;">
+    <input id="songInput" type="text" placeholder="Type Song - Artist (e.g. Hello - Adele) or just a song name from the list" />
+    <button id="searchBtn" class="btn">Get Lyrics ✨</button>
+    <button id="randomBtn" class="btn secondary">Random Song 🐚</button>
+    <button id="toggleApi" class="btn ghost" title="Toggle API on/off">API: OFF</button>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <h3 style="margin-top:14px;">Lyrics</h3>
+      <div id="lyricsBox">Your lyrics will appear here — try "Random Song" or search by typing "Song - Artist".</div>
+
+      <div class="footer">
+        <div class="small">Built-in library: <span id="libraryCount"></span> songs</div>
+        <div class="small">API provider: Lyrics.ovh (toggle ON to use)</div>
+      </div>
+    </div>
+
+    <div style="width:260px;">
+      <h3 style="margin-top:14px;">Song Library</h3>
+      <div id="songList" style="border-radius:10px; padding:10px; background:rgba(255,255,255,0.9); border:1px solid rgba(11,107,131,0.05); max-height:360px; overflow:auto;">
+        <!-- list populated by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Built-in small lyric library (oceany + pop sample)
+  const library = {
+    "Ocean Waves - Original": "Rolling waves across the shore,\nCalling me forevermore.\nSalt and breeze, a perfect blend,\nOcean waves, my peaceful friend.",
+    "Deep Blue - Original": "Into the deep blue we dive,\nWhere glowing jellyfish come alive.\nSilent currents pull us through,\nThe ocean sings in shades of blue.",
+    "Coral Dreams - Original": "Dreaming in colors beneath the sea,\nCoral castles calling to me.\nFish dance softly in the light,\nUnderwater worlds shine bright.",
+    "Hello - Adele": "Hello, it's me\nI was wondering if after all these years you'd like to meet...",
+    "Someone Like You - Adele": "I heard that you're settled down\nThat you found a girl and you're married now...",
+    "Believer - Imagine Dragons": "First things first\nI'ma say all the words inside my head...",
+    "Shallow - Lady Gaga": "Tell me something, girl\nAre you happy in this modern world?",
+    "Lovely - Billie Eilish": "Isn't it lovely, all alone\nHeart made of glass, my mind of stone..."
+  };
+
+  // state
+  let useApi = false;
+
+  // DOM refs
+  const input = document.getElementById('songInput');
+  const searchBtn = document.getElementById('searchBtn');
+  const randomBtn = document.getElementById('randomBtn');
+  const lyricsBox = document.getElementById('lyricsBox');
+  const songListEl = document.getElementById('songList');
+  const libraryCount = document.getElementById('libraryCount');
+  const toggleApiBtn = document.getElementById('toggleApi');
+
+  // populate UI
+  function refreshLibraryUI(){
+    songListEl.innerHTML = '';
+    const keys = Object.keys(library).sort();
+    libraryCount.textContent = keys.length;
+    keys.forEach(k=>{
+      const d = document.createElement('div');
+      d.textContent = k;
+      d.style.padding = '6px 8px';
+      d.style.borderRadius = '8px';
+      d.style.marginBottom = '6px';
+      d.style.cursor = 'pointer';
+      d.style.fontSize = '13px';
+      d.onmouseenter = ()=> d.style.background='rgba(11,107,131,0.04)';
+      d.onmouseleave = ()=> d.style.background='transparent';
+      d.onclick = ()=> { input.value = k; fetchLyrics(); };
+      songListEl.appendChild(d);
+    });
+  }
+
+  refreshLibraryUI();
+
+  // helpers
+  function setStatus(text){
+    lyricsBox.textContent = text;
+  }
+
+  // fetch using Lyrics.ovh API
+  async function fetchFromApi(artist, song){
+    // lyrics.ovh expects /artist/title
+    const url = `https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(song)}`;
+    try{
+      const res = await fetch(url);
+      if(!res.ok) throw new Error('not ok');
+      const data = await res.json();
+      return data.lyrics || null;
+    }catch(e){
+      return null;
+    }
+  }
+
+  async function fetchLyrics(){
+    const raw = input.value.trim();
+    if(!raw){
+      setStatus('Please type a song (e.g. "Hello - Adele") or pick from the list.');
+      return;
+    }
+
+    // if user typed "Song - Artist" prefer that format
+    let song = raw;
+    let artist = '';
+    if(raw.includes('-')){
+      const parts = raw.split('-');
+      song = parts[0].trim();
+      artist = parts.slice(1).join('-').trim();
+      // fullKey check
+      const fullKey = raw;
+      if(library[fullKey]){
+        setStatus(library[fullKey]);
+        return;
+      }
+      // try song - artist key variants
+      const altKey = `${song} - ${artist}`;
+      if(library[altKey]){ setStatus(library[altKey]); return; }
+    }
+
+    // direct library match (song name only)
+    const exactKey = Object.keys(library).find(k => k.toLowerCase() === raw.toLowerCase());
+    if(exactKey){
+      setStatus(library[exactKey]);
+      return;
+    }
+
+    // if API enabled and format includes artist, try API
+    if(useApi && artist){
+      setStatus('Fetching lyrics from API... 🌐');
+      const apiLyrics = await fetchFromApi(artist, song);
+      if(apiLyrics){
+        setStatus(apiLyrics);
+        return;
+      } else {
+        setStatus("No lyrics found from API. Showing local results (if any).");
+      }
+    }
+
+    // fallback: fuzzy-ish local search by song name contained in keys
+    const foundKey = Object.keys(library).find(k => k.toLowerCase().includes(song.toLowerCase()));
+    if(foundKey){
+      setStatus(library[foundKey]);
+      return;
+    }
+
+    setStatus("No lyrics found — try toggling API ON or search a different song. 💧");
+  }
+
+  // random song
+  function pickRandom(){
+    const keys = Object.keys(library);
+    const pick = keys[Math.floor(Math.random()*keys.length)];
+    input.value = pick;
+    fetchLyrics();
+  }
+
+  // wire events
+  searchBtn.addEventListener('click', fetchLyrics);
+  randomBtn.addEventListener('click', pickRandom);
+
+  toggleApiBtn.addEventListener('click', ()=>{
+    useApi = !useApi;
+    toggleApiBtn.textContent = 'API: ' + (useApi ? 'ON' : 'OFF');
+    toggleApiBtn.style.border = useApi ? '1px solid rgba(30,160,190,0.35)' : '1px dashed rgba(11,107,131,0.12)';
+    toggleApiBtn.title = useApi ? 'API enabled: will try Lyrics.ovh for artist/title' : 'API disabled';
+  });
+
+  // allow Enter to search
+  input.addEventListener('keydown', (e)=>{ if(e.key==='Enter') fetchLyrics(); });
+
+  // show initial count
+  libraryCount.textContent = Object.keys(library).length;
+</script>
+</body>
+</html>
